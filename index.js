@@ -113,8 +113,8 @@ async function addSentenceWord(req, res) {
 
 	try {
 
-		await db.query("insert into sentences (sentence, word_id) values ($1, $2)", [ text, id ]);
-		res.json({ status: true });
+		let newRow = await db.query("insert into sentences (sentence, word_id) values ($1, $2) returning *", [ text, id ]);
+		res.json({ status: true, id: newRow.rows.id });
 
 	} catch(e) {
 		console.log(e);
