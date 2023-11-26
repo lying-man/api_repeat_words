@@ -1,6 +1,7 @@
 const express = require("express");
 const db = require("./db.js");
 const cors = require("cors");
+const formatWord = require("./formatWord.js");
 
 const app = express();
 
@@ -65,7 +66,12 @@ async function addWord(req, res) {
 
 	try {
 
-		const newWord = await db.query("insert into words (word, description) values ($1, $2) returning *", [ data.word, description ]);
+		const searchWord = formatWord(data.word);
+		const searchedWord = await db.query("select * from words where word like $1", [ searchWord ]);
+
+		if (searchedWord.rows.length) return res.status(500).json({error: "already have"});
+
+		const newWord = await db.query("insert into words (word, description) values ($1, $2) returning *", [ searchWord, description ]);
 		const ID = newWord.rows[0].id;
 
 		if (data.sentences) {
