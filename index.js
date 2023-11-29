@@ -36,13 +36,8 @@ async function getRandomWords(req, res) {
 				data.push(row);
 				continue;
 			}
-
-			sentences = sentences.rows.map(el => {
-				let { word_id, ...sentenceItem } = el;
-				return sentenceItem;
-			});
-
-			data.push({ ...row, sentences: sentences });
+			
+			data.push({ ...row, sentences: sentences.rows });
 
 		}
 
