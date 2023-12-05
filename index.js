@@ -31,12 +31,6 @@ async function getRandomWords(req, res) {
 		for (let row of words.rows) {
 
 			let sentences = await db.query("select * from sentences where word_id = $1", [ row.id ]);
-			
-			if (!sentences.rows.length) {
-				data.push(row);
-				continue;
-			}
-			
 			data.push({ ...row, sentences: sentences.rows });
 
 		}
