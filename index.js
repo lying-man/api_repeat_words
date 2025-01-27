@@ -31,18 +31,7 @@ async function getRandomWords(req, res) {
 		for (let row of words.rows) {
 
 			let sentences = await db.query("select * from sentences where word_id = $1", [ row.id ]);
-			
-			if (!sentences.rows.length) {
-				data.push(row);
-				continue;
-			}
-
-			sentences = sentences.rows.map(el => {
-				let { word_id, ...sentenceItem } = el;
-				return sentenceItem;
-			});
-
-			data.push({ ...row, sentences: sentences });
+			data.push({ ...row, sentences: sentences.rows });
 
 		}
 
@@ -120,7 +109,7 @@ async function addSentenceWord(req, res) {
 	try {
 
 		let newRow = await db.query("insert into sentences (sentence, word_id) values ($1, $2) returning *", [ text, id ]);
-		res.json({ status: true, id: newRow.rows.id });
+		res.json({ status: true, id: newRow.rows[0].id });
 
 	} catch(e) {
 		console.log(e);
